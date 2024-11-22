@@ -11,6 +11,7 @@ import machine
 import onewire
 import ds18x20
 import time
+from .logger import Logger
 
 class TemperatureSensor:
     _pin: int = 0
@@ -24,7 +25,7 @@ class TemperatureSensor:
         self._sensor = ds18x20.DS18X20(self._one_wire)
         devices = self._sensor.scan()
         self._sensor.convert_temp() # !!!! <- Double check it
-        print("Found devices:", devices)
+        Logger.print("Found devices:", devices)
         if not devices:
             raise RuntimeError("No DS18B20 found!")
 
@@ -35,5 +36,5 @@ class TemperatureSensor:
 
             for device in self._devices:
                 temp = self._sensor.read_temp(device)
-                print("Temperature:", temp, "°C")
+                Logger.print("Temperature:", temp, "°C")
                 return temp
