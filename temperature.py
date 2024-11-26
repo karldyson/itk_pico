@@ -23,18 +23,16 @@ class TemperatureSensor:
         self._pin = pin
         self._one_wire = onewire.OneWire(machine.Pin(pin))  
         self._sensor = ds18x20.DS18X20(self._one_wire)
-        devices = self._sensor.scan()
-        self._sensor.convert_temp() # !!!! <- Double check it
-        Logger.print("Found devices:", devices)
-        if not devices:
+        self._devices = self._sensor.scan()
+        self._sensor.convert_temp()
+        time.sleep(1) 
+        Logger.print("Found devices:", self._devices)
+        if not self._devices:
             raise RuntimeError("No DS18B20 found!")
 
     def get_temperature(self):
-        while True:
-            # self._sensor.convert_temp()
-            # time.sleep(1)  # Wait for the conversion to complete
-
-            for device in self._devices:
-                temp = self._sensor.read_temp(device)
-                Logger.print("Temperature:", temp, "°C")
-                return temp
+        for device in self._devices:
+            temp = self._sensor.read_temp(device)
+            Logger.print("Temperature:", temp)
+            return temp
+        

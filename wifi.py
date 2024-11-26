@@ -16,6 +16,8 @@ class WiFi:
     _wlan.active(True)
     _ssid = ""
     _password = ""
+    _ip: str = None
+    _subnet_mask: str = None
 
     def connect(self, ssid: str, password: str):
         self.ssid = ssid
@@ -27,11 +29,15 @@ class WiFi:
             Logger.print(f"Connecting to Wi-Fi... {seconds}")
             time.sleep(1)
         Logger.print("Connected to Wi-Fi:", self._wlan.ifconfig())
+        self._ip = self._wlan.ifconfig()[0]
+        self._subnet_mask = self._wlan.ifconfig()[1]
 
     def try_reconnect_if_lost(self):
         if self._wlan.isconnected():
             pass
         else:
+            self._ip = None
+            self._subnet_mask = None
             Logger.print("WiFi connection lost. Reconnecting!")
             self._wlan.disconnect()
             self.connect(self._ssid, self._password)  
@@ -41,3 +47,10 @@ class WiFi:
         mac_address_formatted = ':'.join(f'{b:02x}' for b in mac_address)
         Logger.print("MAC Address:", mac_address_formatted)
         return mac_address_formatted
+
+    def get_ip_address(self):
+        return self._ip
+
+    def get_subnet_mask(self):
+        return self._subnet_mask
+    
