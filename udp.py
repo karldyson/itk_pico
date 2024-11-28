@@ -33,4 +33,5 @@ class Udp:
     def send(self, message: str, ip_address: str, port: int):
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp_socket.sendto(message, (ip_address, port))
+        Logger.print(f"UDP message: {message} is sent")
         udp_socket.close()
