@@ -18,17 +18,23 @@ class Udp:
     def __init__(self, port: int):
         self._port = port
 
-    def start_listening(self):
+    def start_listening(self, is_blocking: bool = False):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        Logger.print(f"Listening to a", self._socket, self._port)
         self._socket.bind(('0.0.0.0', self._port))
+        self._socket.setblocking(is_blocking)
 
     def stop_listening(self):
         self._socket.close()
 
-    def read(self):
-        message, addr = self._socket.recvfrom(1024)  # Buffer size of 1024 bytes
-        Logger.print(f"Received message: {message} from {addr}")
-        return message, addr
+    def read(self): # -> tuple[str?, str, int?]
+        try:
+            message, address_pair = self._socket.recvfrom(1024)
+            addr, port = address_pair
+            Logger.print(f"Received message: {message} from {addr}:{port}")
+            return message, addr, port
+        except Exception as e:
+            return None, None, None
     
     def send(self, message: str, ip_address: str, port: int):
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

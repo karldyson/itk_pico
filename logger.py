@@ -8,7 +8,7 @@
 # See the LICENSE file for the full text of the license.
 
 class Logger:
-    _is_enabled: bool = False
+    _is_enabled: bool = True
 
     @staticmethod
     def set_enabled(is_enabled: bool):
