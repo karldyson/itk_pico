@@ -21,5 +21,4 @@ def get_broadcast_address(ip: str, subnet_mask: str):
     return int_to_ip(broadcast_int)
 
 def ip_2_broadcast(ip_address: str) -> str:
-    print("OLD IP", ip_address, "NEW IP",".".join(ip_address.split(".")[:-1] + ["255"]))
     return ".".join(ip_address.split(".")[:-1] + ["255"])
