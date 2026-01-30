@@ -20,8 +20,8 @@ class WiFi:
     _subnet_mask: str = None
 
     def connect(self, ssid: str, password: str):
-        self.ssid = ssid
-        self.password = password
+        self._ssid = ssid
+        self._password = password
         self._wlan.connect(ssid, password)
         seconds = 1
         while not self._wlan.isconnected():
