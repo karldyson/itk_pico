@@ -7,10 +7,6 @@
 #
 # See the LICENSE file for the full text of the license.
 #
-# Tweaked by Karl Dyson to add desired functionality
-# Notably:
-#   * friendly ascii names for sensors
-#   * support for multiple sensors connected to the GPIO pin
 
 import machine
 import onewire
@@ -25,8 +21,6 @@ class TemperatureSensor:
     _sensor: ds18x20.DS18X20
     _devices = []
 
-    # modified by Karl Dyson to add a little extra debug at
-    # initialisation to include the friendly name of the sensor
     def __init__(self, pin: int) -> None:
         self._pin = pin
         self._one_wire = onewire.OneWire(machine.Pin(pin))
@@ -50,8 +44,6 @@ class TemperatureSensor:
             Logger.print("Temperature:", temp)
             return temp
 
-    # added by Karl Dyson leaving the original get_temperature
-    # alone for backward compatibility
     # returns a dictionary of sensor temperatures indexed by the
     # ascii friendly name. copes with multiple sensors on the same
     # GPIO pin
@@ -66,13 +58,11 @@ class TemperatureSensor:
             temps[friendly_name] = temp
         return temps
 
-    # added by Karl Dyson
     # returns a friendier ascii device name
     def friendly_name(self, device):
         string = binascii.hexlify(device)
         return string.decode('ascii')
 
-    # added by Karl Dyson
     # returns a dictionary of sensor friendly names
     def get_device_friendly_names(self):
         names = {}
