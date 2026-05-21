@@ -19,28 +19,34 @@ class WiFi:
     _ip: str = None
     _subnet_mask: str = None
 
-    def connect(self, ssid: str, password: str):
+    def connect(self, ssid: str, password: str) -> bool:
         self._ssid = ssid
         self._password = password
         self._wlan.connect(ssid, password)
         seconds = 1
         while not self._wlan.isconnected():
+            status = self._wlan.status()
+            if status < 0 and status != -2:
+                Logger.print(f"WiFi connect failed, status: {status}")
+                return False
+            if status == -2:
+                self._wlan.connect(ssid, password)
             seconds += 1
             Logger.print(f"Connecting to Wi-Fi... {seconds}")
             time.sleep(1)
         Logger.print("Connected to Wi-Fi:", self._wlan.ifconfig())
         self._ip = self._wlan.ifconfig()[0]
         self._subnet_mask = self._wlan.ifconfig()[1]
+        return True
 
     def try_reconnect_if_lost(self):
-        if self._wlan.isconnected():
-            pass
-        else:
+        if not self._wlan.isconnected():
             self._ip = None
             self._subnet_mask = None
             Logger.print("WiFi connection lost. Reconnecting!")
             self._wlan.disconnect()
-            self.connect(self._ssid, self._password)  
+            if not self.connect(self._ssid, self._password):
+                Logger.print("Reconnect failed, will retry next cycle")
 
     def get_mac_address(self):
         mac_address = self._wlan.config('mac')  
